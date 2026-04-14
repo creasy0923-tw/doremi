@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>樂理全能練習室：高音譜號篇</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; scroll-behavior: smooth; background-color: #f1f5f9; }
+        .staff-line { stroke: #334155; stroke-width: 2; }
+        .ledger-line { stroke: #334155; stroke-width: 2; }
+        .note-head { fill: #1e293b; transition: all 0.3s; }
+        .note-arrow { stroke: #6366f1; stroke-width: 2; fill: none; }
+        .correct-bg { background-color: #ecfdf5; border-color: #10b981; }
+        .incorrect-bg { background-color: #fef2f2; border-color: #ef4444; }
+        .active-choice { transform: scale(1.05); border-color: #6366f1; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); }
+        .nav-link:hover { color: #6366f1; }
+    </style>
+</head>
+<body class="pb-20">
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 p-4 mb-8">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <span class="font-bold text-indigo-700 text-xl">樂理全能練習室</span>
+            <div class="hidden md:flex gap-6 text-sm font-bold text-slate-600">
+                <a href="#part1" class="nav-link">第一大題：音高識別</a>
+                <a href="#part2" class="nav-link">第二大題：音序分析</a>
+                <a href="#part3" class="nav-link">第三大題：聽力辨識</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4">
+        <!-- Part 1: Identification -->
+        <section id="part1" class="mb-16 scroll-mt-24">
+            <div class="mb-8 border-l-4 border-indigo-500 pl-4">
+                <h2 class="text-2xl font-bold text-slate-800">第一大題：音高識別</h2>
+                <p class="text-slate-500">請觀察五線譜上的音符位置，並選擇正確的唱名。</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Q1-Q4 Identification -->
+                <script>
+                    const p1Data = [
+                        { id: 'p1q1', label: '1. 下加一線是什麼音？', y: 95, led: true, ans: 'Do' },
+                        { id: 'p1q2', label: '2. 下加一間是什麼音？', y: 88, led: false, ans: 'Re' },
+                        { id: 'p1q3', label: '3. 第一線上的音是？', y: 80, led: false, ans: 'Mi' },
+                        { id: 'p1q4', label: '4. 第一間的音是？', y: 72, led: false, ans: 'Fa' }
+                    ];
+                    document.write(p1Data.map(q => `
+                        <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-transparent transition-all" id="${q.id}">
+                            <p class="font-bold text-slate-700 mb-4">${q.label}</p>
+                            <div class="bg-slate-50 rounded-xl p-2 mb-4">
+                                <svg viewBox="0 0 200 120" class="w-full">
+                                    ${[20, 35, 50, 65, 80].map(y => `<line x1="10" y1="${y}" x2="190" y2="${y}" class="staff-line" />`).join('')}
+                                    ${q.led ? '<line x1="85" y1="95" x2="115" y2="95" class="ledger-line" />' : ''}
+                                    <ellipse cx="100" cy="${q.y}" rx="9" ry="7" class="note-head fill-indigo-500" transform="rotate(-20 100 ${q.y})" />
+                                </svg>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                ${['Do', 'Re', 'Mi', 'Fa'].map(opt => `
+                                    <button onclick="checkP1('${q.id}', '${opt}', '${q.ans}', this)" class="py-2 border rounded-lg hover:bg-indigo-50 transition text-sm font-medium">${opt}</button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </section>
+
+        <!-- Part 2: Sequence Analysis -->
+        <section id="part2" class="mb-16 scroll-mt-24">
+            <div class="mb-8 border-l-4 border-indigo-500 pl-4">
+                <h2 class="text-2xl font-bold text-slate-800">第二大題：音序關係圖卡</h2>
+                <p class="text-slate-500">分析音符之間的「移動方向」與「間隔距離」。</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <script>
+                    const p2Data = [
+                        { id: 1, label: "Do ➜ Mi", seq: [95, 80], led: [true, false], dir: 'up', type: 'skip' },
+                        { id: 2, label: "Fa ➜ Mi", seq: [72, 80], led: [false, false], dir: 'down', type: 'step' },
+                        { id: 3, label: "Mi ➜ Re", seq: [80, 88], led: [false, false], dir: 'down', type: 'step' },
+                        { id: 4, label: "Mi ➜ Fa", seq: [80, 72], led: [false, false], dir: 'up', type: 'step' },
+                        { id: 5, label: "Fa ➜ Re", seq: [72, 88], led: [false, false], dir: 'down', type: 'skip' },
+                        { id: 6, label: "Re ➜ Do", seq: [88, 95], led: [false, true], dir: 'down', type: 'step' }
+                    ];
+                    document.write(p2Data.map(q => `
+                        <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-transparent transition-all" id="p2card-${q.id}">
+                            <h3 class="font-bold text-indigo-600 mb-4 text-center text-xl">${q.label}</h3>
+                            <div class="bg-slate-50 rounded-lg p-2 mb-4">
+                                <svg viewBox="0 0 200 120" class="w-full">
+                                    ${[20, 35, 50, 65, 80].map(y => `<line x1="20" y1="${y}" x2="180" y2="${y}" class="staff-line" />`).join('')}
+                                    ${q.led[0] ? '<line x1="45" y1="95" x2="75" y2="95" class="ledger-line" />' : ''}
+                                    <ellipse cx="60" cy="${q.seq[0]}" rx="8" ry="6" class="note-head" transform="rotate(-20 60 ${q.seq[0]})" />
+                                    ${q.led[1] ? '<line x1="125" y1="95" x2="155" y2="95" class="ledger-line" />' : ''}
+                                    <ellipse cx="140" cy="${q.seq[1]}" rx="8" ry="6" class="note-head" transform="rotate(-20 140 ${q.seq[1]})" />
+                                    <path d="M 75 ${q.seq[0]} Q 100 ${ (q.seq[0]+q.seq[1])/2 - 10 } 125 ${q.seq[1]}" class="note-arrow" marker-end="url(#arrowhead)" />
+                                </svg>
+                            </div>
+                            <div class="space-y-3">
+                                <select onchange="checkP2(${q.id}, '${q.dir}', '${q.type}', this, 'dir')" class="w-full p-2 border rounded-lg text-sm bg-white">
+                                    <option value="">選擇方向...</option>
+                                    <option value="up">上行</option>
+                                    <option value="down">下行</option>
+                                </select>
+                                <select onchange="checkP2(${q.id}, '${q.dir}', '${q.type}', this, 'type')" class="w-full p-2 border rounded-lg text-sm bg-white">
+                                    <option value="">選擇距離...</option>
+                                    <option value="step">級進 (相鄰)</option>
+                                    <option value="skip">跳進 (隔開)</option>
+                                </select>
+                            </div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </section>
+
+        <!-- Part 3: Advanced Listening -->
+        <section id="part3" class="mb-16 scroll-mt-24">
+            <div class="mb-8 border-l-4 border-indigo-500 pl-4 flex justify-between items-end">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">第三大題：進階聽力辨識</h2>
+                    <p class="text-slate-500">移除所有文字與引導箭頭，請完全依賴聽覺與五線譜辨識。</p>
+                </div>
+            </div>
+
+            <div class="bg-indigo-50 rounded-3xl p-8 border-2 border-indigo-100 flex flex-col items-center mb-10 shadow-inner">
+                <button id="play-btn" onclick="playCurrentQuestion()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-5 rounded-full font-bold text-xl shadow-lg transition-all flex items-center gap-3 active:scale-95 group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    聽聽看老師唱什麼
+                </button>
+                <p id="listening-status" class="mt-4 text-indigo-600 font-bold h-6"></p>
+            </div>
+
+            <div id="p3-container" class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <!-- Listening cards injected via JS initCards() -->
+            </div>
+
+            <div id="p3-feedback" class="mt-10 text-center hidden">
+                <div class="inline-block px-8 py-4 rounded-2xl font-bold text-xl shadow-sm" id="p3-pill"></div>
+                <div class="mt-4">
+                    <button onclick="nextP3Question()" class="text-indigo-600 font-bold hover:underline">下一題 ➜</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- SVG Marker Definitions -->
+    <svg width="0" height="0">
+        <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#6366f1" />
+            </marker>
+        </defs>
+    </svg>
+
+    <script>
+        // --- 第一大題邏輯 ---
+        function checkP1(cardId, choice, correct, btn) {
+            const card = document.getElementById(cardId);
+            const buttons = card.querySelectorAll('button');
+            buttons.forEach(b => b.className = "py-2 border rounded-lg hover:bg-indigo-50 transition text-sm font-medium");
+            
+            if (choice === correct) {
+                btn.className = "py-2 border rounded-lg bg-green-100 border-green-500 text-green-700 text-sm font-bold";
+                card.classList.add('border-green-300');
+            } else {
+                btn.className = "py-2 border rounded-lg bg-red-100 border-red-500 text-red-700 text-sm font-bold";
+                card.classList.remove('border-green-300');
+            }
+        }
+
+        // --- 第二大題邏輯 ---
+        const p2UserProgress = { 1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{} };
+        function checkP2(id, correctDir, correctType, select, field) {
+            p2UserProgress[id][field] = select.value;
+            const card = document.getElementById(`p2card-${id}`);
+            if (p2UserProgress[id].dir && p2UserProgress[id].type) {
+                const isCorrect = p2UserProgress[id].dir === correctDir && p2UserProgress[id].type === correctType;
+                card.className = "bg-white p-6 rounded-2xl shadow-md border-2 transition-all " + (isCorrect ? "correct-bg border-green-500" : "incorrect-bg border-red-500");
+            }
+        }
+
+        // --- 第三大題邏輯 ---
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        const freqs = { 'do': 261.63, 're': 293.66, 'mi': 329.63, 'fa': 349.23, 'sol': 392.00 };
+        const p3Data = [
+            { id: 1, sequence: ['do', 'mi'], y: [95, 80], led: [true, false] },
+            { id: 2, sequence: ['fa', 'mi'], y: [72, 80], led: [false, false] },
+            { id: 3, sequence: ['mi', 're'], y: [80, 88], led: [false, false] },
+            { id: 4, sequence: ['mi', 'fa'], y: [80, 72], led: [false, false] },
+            { id: 5, sequence: ['fa', 're'], y: [72, 88], led: [false, false] },
+            { id: 6, sequence: ['re', 'do'], y: [88, 95], led: [false, true] }
+        ];
+        let p3CurrentIndex = 0;
+        let p3CanAnswer = false;
+
+        function initP3Cards() {
+            const container = document.getElementById('p3-container');
+            container.innerHTML = p3Data.map(q => `
+                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-transparent cursor-pointer transition-all hover:active-choice" 
+                     onclick="submitP3(${q.id})" id="p3card-${q.id}">
+                    <div class="bg-slate-50 rounded-xl p-4 pointer-events-none">
+                        <svg viewBox="0 0 200 120" class="w-full">
+                            ${[20, 35, 50, 65, 80].map(y => `<line x1="20" y1="${y}" x2="180" y2="${y}" class="staff-line" />`).join('')}
+                            ${q.led[0] ? '<line x1="45" y1="95" x2="75" y2="95" class="ledger-line" />' : ''}
+                            <ellipse cx="60" cy="${q.y[0]}" rx="9" ry="7" class="note-head" transform="rotate(-20 60 ${q.y[0]})" />
+                            ${q.led[1] ? '<line x1="125" y1="95" x2="155" y2="95" class="ledger-line" />' : ''}
+                            <ellipse cx="140" cy="${q.y[1]}" rx="9" ry="7" class="note-head" transform="rotate(-20 140 ${q.y[1]})" />
+                        </svg>
+                    </div>
+                </div>
+            `).join('');
+            p3CurrentIndex = Math.floor(Math.random() * p3Data.length);
+        }
+
+        function playSound(f, start, dur) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, start);
+            gain.gain.setValueAtTime(0, start);
+            gain.gain.linearRampToValueAtTime(0.2, start + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(start); osc.stop(start + dur);
+        }
+
+        function playCurrentQuestion() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const status = document.getElementById('listening-status');
+            const q = p3Data[p3CurrentIndex];
+            status.innerText = "正在演唱中...";
+            p3CanAnswer = true;
+            const now = audioCtx.currentTime;
+            playSound(freqs[q.sequence[0]], now, 0.8);
+            playSound(freqs[q.sequence[1]], now + 1.2, 1.2);
+            setTimeout(() => { status.innerText = "請選出正確的圖卡！"; }, 2400);
+        }
+
+        function submitP3(id) {
+            if (!p3CanAnswer) return;
+            const correctId = p3Data[p3CurrentIndex].id;
+            const pill = document.getElementById('p3-pill');
+            const feedback = document.getElementById('p3-feedback');
+            
+            p3Data.forEach(q => document.getElementById(`p3card-${q.id}`).className = "bg-white p-6 rounded-2xl shadow-md border-2 border-transparent cursor-pointer transition-all hover:active-choice");
+            
+            const sel = document.getElementById(`p3card-${id}`);
+            feedback.classList.remove('hidden');
+            if (id === correctId) {
+                sel.classList.add('correct-bg', 'border-green-500');
+                pill.innerText = "完全正確！您對音高與位置非常敏銳！";
+                pill.className = "inline-block px-8 py-4 rounded-2xl font-bold text-xl bg-green-100 text-green-700 shadow-sm border border-green-200";
+                p3CanAnswer = false;
+            } else {
+                sel.classList.add('incorrect-bg', 'border-red-500');
+                pill.innerText = "好像選錯囉，再聽一遍試試看？";
+                pill.className = "inline-block px-8 py-4 rounded-2xl font-bold text-xl bg-red-100 text-red-700 shadow-sm border border-red-200";
+            }
+        }
+
+        function nextP3Question() {
+            p3CurrentIndex = Math.floor(Math.random() * p3Data.length);
+            document.getElementById('p3-feedback').classList.add('hidden');
+            document.getElementById('listening-status').innerText = "";
+            p3Data.forEach(q => document.getElementById(`p3card-${q.id}`).className = "bg-white p-6 rounded-2xl shadow-md border-2 border-transparent cursor-pointer transition-all hover:active-choice");
+        }
+
+        window.onload = () => { initP3Cards(); };
+    </script>
+</body>
+</html>
